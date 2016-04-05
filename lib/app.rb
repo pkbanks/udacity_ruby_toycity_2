@@ -73,25 +73,25 @@ def print_toy_report(toy)
 
 	# Print the retail price of the toy
 	retail_price =  get_toy_price(toy)
-	puts "Retail Price: $#{sprintf('%.2f', retail_price)}"
+	puts "Retail Price: #{format_float_to_string(retail_price, {sym: '$'})}"
 
 	# Calculate and print the total number of purchases
 	puts "Total Purchases: #{toy_units_sold}"
 
 	# Calculate and print the total amount of sales
 	toy_total_sales = get_toy_total_sales(toy)
-	puts "Total Sales: $#{sprintf('%.2f', toy_total_sales)}"
+	puts "Total Sales: #{format_float_to_string(toy_total_sales, {sym: '$'})}"
 
 	# Calculate and print the average price the toy sold for
 	average_price = toy_total_sales/toy_units_sold
-	puts "Average Price: $#{sprintf('%.2f', average_price)}"
+	puts "Average Price: #{format_float_to_string(average_price, {sym: '$'})}"
 
 	# Calculate and print the average discount (% or $) based off the average sales price
 	toy_average_discount_amount = retail_price - average_price
-	puts "Average Discount: $#{sprintf('%.2f',toy_average_discount_amount)}"
+	puts "Average Discount: #{format_float_to_string(toy_average_discount_amount, {sym: '$'})}"
 
 	toy_average_discount_percent = toy_average_discount_amount / retail_price * 100
-	puts "Average Discount Percentage: #{sprintf('%.2f',toy_average_discount_percent)}%"
+	puts "Average Discount Percentage: #{format_float_to_string(toy_average_discount_percent, {sym: '%'})}"
 
 	puts line_break()
 	puts ''
@@ -212,10 +212,10 @@ def print_brand_data(brand_data)
 		puts "Number of Products: #{data[:toy_stock]}"
 	  
 	  # Calculate and print the average price of the brand's toys
-	  puts "Average price: $#{sprintf('%.2f', data[:cumulative_price] / data[:toy_count])}"
+	  puts "Average price: #{format_float_to_string(data[:cumulative_price] / data[:toy_count], {sym: '$'})}"
 	  
 	  # Calculate and print the total revenue of all the brand's toy sales combined
-	  puts "Total revenue: $#{sprintf('%.2f', data[:total_revenue])}"
+	  puts "Total revenue: #{format_float_to_string(data[:total_revenue], {sym: '$'})}"
 	  
 	  puts line_break
 	  puts ''
@@ -272,6 +272,25 @@ def line_break(break_character = '*', character_length = 20)
 
 	return result
 
+end
+
+def format_float_to_string(num, opts = {})
+
+	# takes a float (num) and returns a string formatted for printing
+	
+	opts = { decimals: 2, sym: '' }.merge!(opts)			# defaults to 2-decimals and no symbol (e.g., $, %)
+
+	result = sprintf("%.#{opts[:decimals]}f", num)
+
+	case opts[:sym]
+		when '$'
+			result = '$' + result
+		when '%'
+			result = result + '%'
+		else
+			result = result + ''
+	end
+	return result
 end
 
 # --------------- Execute Here ---------------
