@@ -250,10 +250,12 @@ def print_sales_report_header
 end
 
 
-def date_today()
+def date_today(format_args = '%B%e, %Y')
 	# returns today's date
 	# to print, simply call puts to this method
-	t = Date.today
+	# see strftime() documentation for formatting options
+	
+	t = Date.today().strftime(format_args)
 	return t
 end
 
