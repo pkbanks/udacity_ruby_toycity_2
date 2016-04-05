@@ -27,12 +27,7 @@ def create_report
 	puts line_break("=", 75)
 
 	# Print today's date
-	puts date_today
-
-	# Print "Products" in ascii art
-	print_products_report_header
-
-	puts ''		# empty line break
+	puts "Date: #{date_today}"
 
 	# Print Products Report
 	print_products_report
@@ -42,20 +37,21 @@ def create_report
 
 end
 
+def print_brands_report
+	
+	# Print "Brands" in ascii art
+	print_brands_report_header
 
-def print_sales_report_header
-	# prints a sales report header in ascii art
-	puts "  ____        _             ____                       _   "
-	puts " / ___|  __ _| | ___  ___  |  _ \\ ___ _ __   ___  _ __| |_ "
-	puts " \\___ \\ / _` | |/ _ \\/ __| | |_) / _ \\ '_ \\ / _ \\| '__| __|"
-	puts "  ___) | (_| | |  __/\\__ \\ |  _ <  __/ |_) | (_) | |  | |_ "
-	puts " |____/ \\__,_|_|\\___||___/ |_| \\_\\___| .__/ \\___/|_|   \\__|"
-	puts "                                     |_|                   "
 end
 
-def print_products_report
+# --------------- Toy and Product Helper Methods ---------------
+
+
+def print_products_report(include_header = true)
 	# method generates a products report
 	# reliant upon the 'items' list in $products_hash file
+
+	print_products_report_header if include_header
 
 	# For each product in the data set:
 	$products_hash['items'].each do | toy |
@@ -102,15 +98,6 @@ def print_toy_report(toy)
 
 end
 
-def print_brands_report
-	
-	# Print "Brands" in ascii art
-	print_brands_report_header
-
-end
-
-# --------------- Toy and Product Helper Methods ---------------
-
 def print_products_report_header
 	# prints a products report header in ascii art
 	puts "                     _            _       "
@@ -121,7 +108,7 @@ def print_products_report_header
 	puts "| .__/|_|  \\___/ \\__,_|\\__,_|\\___|\\__|___/"
 	puts "| |                                       "
 	puts "|_|                                       "
-
+	puts ''		# empty line break for bottom margin
 end
 
 def get_toy_price(toy)
@@ -152,8 +139,91 @@ end
 
 # --------------- Brand Helper Methods ---------------
 
+def print_brands_report(include_header = true)
 
-def print_brands_report_header
+	brand_data = {}		# this is a hash we will use to compile and store
+										# toy/product data, aggregated by brand
+
+	# print brands header
+	print print_brands_report_header if include_header
+
+	# grab the product and purchase data, arranged by brand
+	brand_data = get_brand_data
+
+	# print brand data
+	print_brand_data(brand_data)		# we could refactor this, but i like showing the steps taken to populate and utilize the hash
+	
+end
+
+def get_brand_data
+
+
+	# this helper method is useful for printing the brands report
+	# using the data from the $products_hash file
+
+	# returns a hash with pertinent product and purchase data
+
+	brand_data = {}		# we will populate and return this hash
+
+	# Let's populate our data hash.
+	$products_hash['items'].each do | toy |
+		# For each product in the data set:
+	
+		brand = toy['brand']
+
+		# if the brand of the product is not in our hash,
+		# add the brand and populate default values
+		unless brand_data.has_key? brand
+			brand_data[brand] = {}
+	    brand_data[brand][:brand_name] = brand
+	    brand_data[brand][:toy_count] = 0
+	    brand_data[brand][:toy_stock] = 0
+	    brand_data[brand][:cumulative_price] = 0  # we will use this to calculate the average price across many toys/products
+	    brand_data[brand][:total_revenue] = 0
+	  end
+
+	  # add product data to our brand hash
+		brand_data[brand][:toy_count] += 1
+		brand_data[brand][:toy_stock] += toy['stock']
+		brand_data[brand][:cumulative_price] += toy['full-price'].to_f
+		
+		# for each sale, add the purchase price to our total revenue
+		toy['purchases'].each do | purchase |
+	  	brand_data[brand][:total_revenue] += purchase['price'].to_f
+		end
+
+	end
+
+	return brand_data
+
+end
+
+def print_brand_data(brand_data)
+	
+	# For each brand in the data set:
+	brand_data.each do | brand, data |
+		
+		# Print the name of the brand
+	  puts data[:brand_name].upcase
+	  
+	  puts line_break
+	  
+	  # Count and print the number of the brand's toys we stock
+		puts "Number of Products: #{data[:toy_stock]}"
+	  
+	  # Calculate and print the average price of the brand's toys
+	  puts "Average price: $#{sprintf('%.2f', data[:cumulative_price] / data[:toy_count])}"
+	  
+	  # Calculate and print the total revenue of all the brand's toy sales combined
+	  puts "Total revenue: $#{sprintf('%.2f', data[:total_revenue])}"
+	  
+	  puts line_break
+	  puts ''
+
+	end
+end
+
+def print_brands_report_header(bottom_margin = true)
 	puts " _                         _     "
 	puts "| |                       | |    "
 	puts "| |__  _ __ __ _ _ __   __| |___ "
@@ -161,18 +231,24 @@ def print_brands_report_header
 	puts "| |_) | | | (_| | | | | (_| \\__ \\"
 	puts "|_.__/|_|  \\__,_|_| |_|\\__,_|___/"
 	puts
+	puts ''		# empty line break for bottom margin
 end
-
-
-# For each brand in the data set:
-	# Print the name of the brand
-	# Count and print the number of the brand's toys we stock
-	# Calculate and print the average price of the brand's toys
-	# Calculate and print the total sales volume of all the brand's toys combined
 
 
 
 # --------------- Other Helper Methods ---------------
+
+
+def print_sales_report_header
+	# prints a sales report header in ascii art
+	puts "  ____        _             ____                       _   "
+	puts " / ___|  __ _| | ___  ___  |  _ \\ ___ _ __   ___  _ __| |_ "
+	puts " \\___ \\ / _` | |/ _ \\/ __| | |_) / _ \\ '_ \\ / _ \\| '__| __|"
+	puts "  ___) | (_| | |  __/\\__ \\ |  _ <  __/ |_) | (_) | |  | |_ "
+	puts " |____/ \\__,_|_|\\___||___/ |_| \\_\\___| .__/ \\___/|_|   \\__|"
+	puts "                                     |_|                   "
+end
+
 
 def date_today()
 	# returns today's date
@@ -182,7 +258,7 @@ def date_today()
 end
 
 def line_break(break_character = '*', character_length = 20)
-	# returns a string of break_character and length character_length
+	# returns a string of character(s) break_character and length character_length
 	# ideal for printing line breaks in report
 
 	# break_character (string) - the character(s) we want to print out
@@ -207,5 +283,3 @@ end
 
 
 start # call start method to trigger report generation
-# scratchpad
-
