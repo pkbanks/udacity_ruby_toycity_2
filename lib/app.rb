@@ -24,11 +24,21 @@ def create_report
 	# Print "Sales Report" in ascii art
 	print_sales_report_header
 
+	puts line_break("=", 75)
+
 	# Print today's date
 	puts date_today
 
 	# Print "Products" in ascii art
-	prints_products_report_header
+	print_products_report_header
+
+	puts ''		# empty line break
+
+	# Print Products Report
+	print_products_report
+
+	# Print Brands Report
+	print_brands_report
 
 end
 
@@ -43,14 +53,65 @@ def print_sales_report_header
 	puts "                                     |_|                   "
 end
 
-def date_today()
-	# returns today's date
-	# to print, simply call puts to this method
-	t = Date.today
-	return t
+def print_products_report
+	# method generates a products report
+	# reliant upon the 'items' list in $products_hash file
+
+	# For each product in the data set:
+	$products_hash['items'].each do | toy |
+		print_toy_report(toy)
+	end
+
 end
 
-def prints_products_report_header
+def print_toy_report(toy)
+
+	# prints the toy segment of the products report
+	# toy = a hash from the $products_hash['items'] array, providing details of a toy
+
+	toy_units_sold = get_toy_units_sold(toy)		# we will use this calculated value a few times
+
+	# Print the name of the toy
+	puts toy['title']
+	puts line_break()
+
+	# Print the retail price of the toy
+	retail_price =  get_toy_price(toy)
+	puts "Retail Price: $#{sprintf('%.2f', retail_price)}"
+
+	# Calculate and print the total number of purchases
+	puts "Total Purchases: #{toy_units_sold}"
+
+	# Calculate and print the total amount of sales
+	toy_total_sales = get_toy_total_sales(toy)
+	puts "Total Sales: $#{sprintf('%.2f', toy_total_sales)}"
+
+	# Calculate and print the average price the toy sold for
+	average_price = toy_total_sales/toy_units_sold
+	puts "Average Price: $#{sprintf('%.2f', average_price)}"
+
+	# Calculate and print the average discount (% or $) based off the average sales price
+	toy_average_discount_amount = retail_price - average_price
+	puts "Average Discount: $#{sprintf('%.2f',toy_average_discount_amount)}"
+
+	toy_average_discount_percent = toy_average_discount_amount / retail_price * 100
+	puts "Average Discount Percentage: #{sprintf('%.2f',toy_average_discount_percent)}%"
+
+	puts line_break()
+	puts ''
+
+end
+
+def print_brands_report
+	
+	# Print "Brands" in ascii art
+	print_brands_report_header
+
+end
+
+# --------------- Toy and Product Helper Methods ---------------
+
+def print_products_report_header
 	# prints a products report header in ascii art
 	puts "                     _            _       "
 	puts "                    | |          | |      "
@@ -63,16 +124,45 @@ def prints_products_report_header
 
 end
 
+def get_toy_price(toy)
+	# returns a float, the retail price of a toy
+	# toy = a hash from the $products_hash['items'] array, providing details of a toy
+	return toy['full-price'].to_f
+end
 
-# For each product in the data set:
-	# Print the name of the toy
-	# Print the retail price of the toy
-	# Calculate and print the total number of purchases
-	# Calculate and print the total amount of sales
-	# Calculate and print the average price the toy sold for
-	# Calculate and print the average discount (% or $) based off the average sales price
+def get_toy_units_sold(toy)
+	# returns an integer, the quantity sold of a given toy
+	# toy = a hash from the $products_hash['items'] array, providing details of a toy
+	return toy['purchases'].length
+end
 
-# Print "Brands" in ascii art
+def get_toy_total_sales(toy)
+	# returns a float, the total proceeds earned from sales of a given toy
+	# toy = a hash from the $products_hash['items'] array, providing details of a toy
+
+	total_sales = 0
+  
+  toy['purchases'].each do |purchase|
+    total_sales += purchase['price']
+  end
+  
+  return total_sales
+
+end
+
+# --------------- Brand Helper Methods ---------------
+
+
+def print_brands_report_header
+	puts " _                         _     "
+	puts "| |                       | |    "
+	puts "| |__  _ __ __ _ _ __   __| |___ "
+	puts "| '_ \\| '__/ _` | '_ \\ / _` / __|"
+	puts "| |_) | | | (_| | | | | (_| \\__ \\"
+	puts "|_.__/|_|  \\__,_|_| |_|\\__,_|___/"
+	puts
+end
+
 
 # For each brand in the data set:
 	# Print the name of the brand
@@ -80,10 +170,42 @@ end
 	# Calculate and print the average price of the brand's toys
 	# Calculate and print the total sales volume of all the brand's toys combined
 
+
+
+# --------------- Other Helper Methods ---------------
+
+def date_today()
+	# returns today's date
+	# to print, simply call puts to this method
+	t = Date.today
+	return t
+end
+
+def line_break(break_character = '*', character_length = 20)
+	# returns a string of break_character and length character_length
+	# ideal for printing line breaks in report
+
+	# break_character (string) - the character(s) we want to print out
+	# character_length (int) - the number of times we print break_character
+	
+	result = ''
+
+	character_length.times do | character |
+		result += break_character
+	end
+
+	return result
+
+end
+
+# --------------- Execute Here ---------------
+
 def start
   setup_files # load, read, parse, and create the files
   create_report # create the report!
 end
 
+
 start # call start method to trigger report generation
+# scratchpad
 
