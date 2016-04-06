@@ -43,13 +43,6 @@ def create_report
 
 end
 
-def print_brands_report
-	
-	# Print "Brands" in ascii art
-	print_brands_report_header
-
-end
-
 # --------------- Toy and Product Helper Methods ---------------
 
 
