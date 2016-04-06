@@ -1,0 +1,47 @@
+commit 743f9d943ae2e4cf8a61bf4c99f0872620682ece
+Author: PK Banks <pkbanks@gmail.com>
+Date:   Tue Apr 5 20:00:33 2016 -0400
+
+    finished making updates to output report to 'report.txt'
+
+commit f9c9742c43003d2ee96f5880305cf1b051deeb9c
+Author: PK Banks <pkbanks@gmail.com>
+Date:   Tue Apr 5 16:20:07 2016 -0400
+
+    added a format option for the date_today helper method.  final commit before submission.
+
+commit 2528186a70b9413747d667d398093addd3fa4ce7
+Author: PK Banks <pkbanks@gmail.com>
+Date:   Tue Apr 5 16:12:56 2016 -0400
+
+    made a new helper method format_float_to_string that has an options hash
+
+commit f67805f53044151e777a60a4888cc1c8c761a587
+Author: PK Banks <pkbanks@gmail.com>
+Date:   Tue Apr 5 15:36:14 2016 -0400
+
+    finished the brands report, moving on to implementing an options hash
+
+commit 37c2647c5f6b0c8732e3cc0c9360da7a92d4fcff
+Author: PK Banks <pkbanks@gmail.com>
+Date:   Mon Apr 4 22:57:16 2016 -0400
+
+    finished the products segement of the report, moving on to brands section
+
+commit 18efeede166d824a51f5ef4e6c0ff57be7fb34a2
+Author: PK Banks <pkbanks@gmail.com>
+Date:   Mon Apr 4 21:55:47 2016 -0400
+
+    finished a few basic methods that don't handle any logic, mostly print headers.  now about to start the logic portion of the process
+
+commit fc09b4368099e27206a07a2843abf14c0efec8bd
+Author: PK Banks <pkbanks@gmail.com>
+Date:   Mon Apr 4 21:29:27 2016 -0400
+
+    all set with the starting point of the project.  from here i will be contributing code.
+
+commit cb527866fc414f9b987a093b64f4c41b49a25a12
+Author: PK Banks <pkbanks@gmail.com>
+Date:   Mon Apr 4 21:21:15 2016 -0400
+
+    Initial Commit
