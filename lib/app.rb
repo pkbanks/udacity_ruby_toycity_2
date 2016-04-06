@@ -19,21 +19,27 @@ def setup_files
 end
 
 def create_report
+	# returns a string that is the report
+	# we can 'puts' this method to a file
 	# will be called by the start method
+
+	report_string = ''
 	
 	# Print "Sales Report" in ascii art
-	print_sales_report_header
+	report_string += get_sales_report_header
 
-	puts line_break("=", 75)
+	report_string += line_break("=", 75) + "\n"		# line break
 
 	# Print today's date
-	puts "Date: #{date_today}"
+	report_string += "Date: #{date_today}"
 
-	# Print Products Report
-	print_products_report
+	# # Print Products Report
+	report_string += get_products_report
 
-	# Print Brands Report
-	print_brands_report
+	# # Print Brands Report
+	report_string += get_brands_report
+
+	return report_string
 
 end
 
@@ -47,68 +53,77 @@ end
 # --------------- Toy and Product Helper Methods ---------------
 
 
-def print_products_report(include_header = true)
+def get_products_report(include_header = true)
 	# method generates a products report
+	# optional argument 'include_header', if true, includes a products header in ascii-art
 	# reliant upon the 'items' list in $products_hash file
 
-	print_products_report_header if include_header
+	report = ''
+
+	report += get_products_report_header if include_header
 
 	# For each product in the data set:
 	$products_hash['items'].each do | toy |
-		print_toy_report(toy)
+		report += get_toy_report(toy)
 	end
+
+	return report
 
 end
 
-def print_toy_report(toy)
+def get_toy_report(toy)
 
-	# prints the toy segment of the products report
+	# returns a string, the toy segment of the products report
 	# toy = a hash from the $products_hash['items'] array, providing details of a toy
+
+	result = ''
 
 	toy_units_sold = get_toy_units_sold(toy)		# we will use this calculated value a few times
 
 	# Print the name of the toy
-	puts toy['title']
-	puts line_break()
+	result += toy['title'] + "\n"
+	result += line_break() + "\n"
 
 	# Print the retail price of the toy
 	retail_price =  get_toy_price(toy)
-	puts "Retail Price: #{format_float_to_string(retail_price, {sym: '$'})}"
+	result += "Retail Price: #{format_float_to_string(retail_price, {sym: '$'})}" + "\n"
 
 	# Calculate and print the total number of purchases
-	puts "Total Purchases: #{toy_units_sold}"
+	result += "Total Purchases: #{toy_units_sold}" + "\n"
 
 	# Calculate and print the total amount of sales
 	toy_total_sales = get_toy_total_sales(toy)
-	puts "Total Sales: #{format_float_to_string(toy_total_sales, {sym: '$'})}"
+	result += "Total Sales: #{format_float_to_string(toy_total_sales, {sym: '$'})}" + "\n"
 
 	# Calculate and print the average price the toy sold for
 	average_price = toy_total_sales/toy_units_sold
-	puts "Average Price: #{format_float_to_string(average_price, {sym: '$'})}"
+	result += "Average Price: #{format_float_to_string(average_price, {sym: '$'})}" + "\n"
 
 	# Calculate and print the average discount (% or $) based off the average sales price
 	toy_average_discount_amount = retail_price - average_price
-	puts "Average Discount: #{format_float_to_string(toy_average_discount_amount, {sym: '$'})}"
+	result += "Average Discount: #{format_float_to_string(toy_average_discount_amount, {sym: '$'})}" + "\n"
 
 	toy_average_discount_percent = toy_average_discount_amount / retail_price * 100
-	puts "Average Discount Percentage: #{format_float_to_string(toy_average_discount_percent, {sym: '%'})}"
+	result += "Average Discount Percentage: #{format_float_to_string(toy_average_discount_percent, {sym: '%'})}" + "\n"
 
-	puts line_break()
-	puts ''
+	result += line_break() + "\n\n"
+
+	return result
 
 end
 
-def print_products_report_header
-	# prints a products report header in ascii art
-	puts "                     _            _       "
-	puts "                    | |          | |      "
-	puts " _ __  _ __ ___   __| |_   _  ___| |_ ___ "
-	puts "| '_ \\| '__/ _ \\ / _` | | | |/ __| __/ __|"
-	puts "| |_) | | | (_) | (_| | |_| | (__| |_\\__ \\"
-	puts "| .__/|_|  \\___/ \\__,_|\\__,_|\\___|\\__|___/"
-	puts "| |                                       "
-	puts "|_|                                       "
-	puts ''		# empty line break for bottom margin
+def get_products_report_header
+	# returns a string, a products report header in ascii art
+	result = "\n"
+	result += "                     _            _       \n"
+	result += "                    | |          | |      \n"
+	result += " _ __  _ __ ___   __| |_   _  ___| |_ ___ \n"
+	result += "| '_ \\| '__/ _ \\ / _` | | | |/ __| __/ __|\n"
+	result += "| |_) | | | (_) | (_| | |_| | (__| |_\\__ \\\n"
+	result += "| .__/|_|  \\___/ \\__,_|\\__,_|\\___|\\__|___/\n"
+	result += "| |                                       \n"
+	result += "|_|                                       \n"
+	result += "\n"		# empty line break for bottom margin
 end
 
 def get_toy_price(toy)
@@ -139,24 +154,31 @@ end
 
 # --------------- Brand Helper Methods ---------------
 
-def print_brands_report(include_header = true)
+def get_brands_report(include_header = true)
+
+	# returns a string, the brands section of a products report
+	# include_header is an optional argument, if true, it includes a ascii-art header
+	# requires use of the $products_hash data in the products.json file
+
+	brands_report = ''
 
 	brand_data = {}		# this is a hash we will use to compile and store
 										# toy/product data, aggregated by brand
 
 	# print brands header
-	print print_brands_report_header if include_header
+	brands_report += print_brands_report_header + "\n" if include_header
 
 	# grab the product and purchase data, arranged by brand
 	brand_data = get_brand_data
 
 	# print brand data
-	print_brand_data(brand_data)		# we could refactor this, but i like showing the steps taken to populate and utilize the hash
+	brands_report += output_brand_data(brand_data)		# we could refactor this, but i like showing the steps taken to populate and utilize the hash
 	
+	return brands_report
+
 end
 
 def get_brand_data
-
 
 	# this helper method is useful for printing the brands report
 	# using the data from the $products_hash file
@@ -198,40 +220,47 @@ def get_brand_data
 
 end
 
-def print_brand_data(brand_data)
+def output_brand_data(brand_data)
+
+	# returns a string, the print out of the brand data report
+	output = ''
 	
 	# For each brand in the data set:
 	brand_data.each do | brand, data |
 		
 		# Print the name of the brand
-	  puts data[:brand_name].upcase
+	  output += data[:brand_name].upcase + "\n"
 	  
-	  puts line_break
+	  output += line_break + "\n"
 	  
 	  # Count and print the number of the brand's toys we stock
-		puts "Number of Products: #{data[:toy_stock]}"
+		output += "Number of Products: #{data[:toy_stock]}" + "\n"
 	  
 	  # Calculate and print the average price of the brand's toys
-	  puts "Average price: #{format_float_to_string(data[:cumulative_price] / data[:toy_count], {sym: '$'})}"
+	  output += "Average price: #{format_float_to_string(data[:cumulative_price] / data[:toy_count], {sym: '$'})}" + "\n"
 	  
 	  # Calculate and print the total revenue of all the brand's toy sales combined
-	  puts "Total revenue: #{format_float_to_string(data[:total_revenue], {sym: '$'})}"
+	  output += "Total revenue: #{format_float_to_string(data[:total_revenue], {sym: '$'})}" + "\n"
 	  
-	  puts line_break
-	  puts ''
+	  output += line_break + "\n\n"
 
 	end
+
+	return output
 end
 
-def print_brands_report_header(bottom_margin = true)
-	puts " _                         _     "
-	puts "| |                       | |    "
-	puts "| |__  _ __ __ _ _ __   __| |___ "
-	puts "| '_ \\| '__/ _` | '_ \\ / _` / __|"
-	puts "| |_) | | | (_| | | | | (_| \\__ \\"
-	puts "|_.__/|_|  \\__,_|_| |_|\\__,_|___/"
-	puts
-	puts ''		# empty line break for bottom margin
+def print_brands_report_header
+	# returns a string, the report header in ascii art
+	
+	header = ''
+
+	header += " _                         _     " + "\n"
+	header += "| |                       | |    " + "\n"
+	header += "| |__  _ __ __ _ _ __   __| |___ " + "\n"
+	header += "| '_ \\| '__/ _` | '_ \\ / _` / __|" + "\n"
+	header += "| |_) | | | (_| | | | | (_| \\__ \\" + "\n"
+	header += "|_.__/|_|  \\__,_|_| |_|\\__,_|___/" + "\n"
+	
 end
 
 
@@ -239,14 +268,16 @@ end
 # --------------- Other Helper Methods ---------------
 
 
-def print_sales_report_header
-	# prints a sales report header in ascii art
-	puts "  ____        _             ____                       _   "
-	puts " / ___|  __ _| | ___  ___  |  _ \\ ___ _ __   ___  _ __| |_ "
-	puts " \\___ \\ / _` | |/ _ \\/ __| | |_) / _ \\ '_ \\ / _ \\| '__| __|"
-	puts "  ___) | (_| | |  __/\\__ \\ |  _ <  __/ |_) | (_) | |  | |_ "
-	puts " |____/ \\__,_|_|\\___||___/ |_| \\_\\___| .__/ \\___/|_|   \\__|"
-	puts "                                     |_|                   "
+def get_sales_report_header
+	# returns a string, a sales report header in ascii art
+	result = ''
+	result += "  ____        _             ____                       _   \n"
+	result += " / ___|  __ _| | ___  ___  |  _ \\ ___ _ __   ___  _ __| |_ \n"
+	result += " \\___ \\ / _` | |/ _ \\/ __| | |_) / _ \\ '_ \\ / _ \\| '__| __|\n"
+	result += "  ___) | (_| | |  __/\\__ \\ |  _ <  __/ |_) | (_) | |  | |_ \n"
+	result += " |____/ \\__,_|_|\\___||___/ |_| \\_\\___| .__/ \\___/|_|   \\__|\n"
+	result += "                                     |_|                   \n"
+	return result
 end
 
 
@@ -254,7 +285,7 @@ def date_today(format_args = '%B%e, %Y')
 	# returns today's date
 	# to print, simply call puts to this method
 	# see strftime() documentation for formatting options
-	
+
 	t = Date.today().strftime(format_args)
 	return t
 end
@@ -299,7 +330,13 @@ end
 
 def start
   setup_files # load, read, parse, and create the files
-  create_report # create the report!
+  # create_report # create the report!
+
+  fname = 'report.txt'
+  report_file = File.open(fname, 'w')
+  report_file.puts create_report
+  report_file.close
+
 end
 
 
